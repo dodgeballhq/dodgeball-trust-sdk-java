@@ -1,6 +1,10 @@
 package com.dodgeballhq.protect.messages;
 
-public class Checkpoint {
+public class Constants {
+    public static class ApiVersion {
+        public static String V1 = "v1";
+    }
+
     public static class VerificationStatus {
         /**
          * In Process on the server
