@@ -49,8 +49,9 @@ public class DodgeballServicesTest {
         String checkpointName = "DONATION";
 
         Map<String, Object> hm = new HashMap<String, Object>();
-        hm.put("amount", 10);
+        hm.put("amount", 30000);
         hm.put("currency", "USD");
+        hm.put("mfaPhoneNumbers", "+16178174021");
 
         Event event = new Event("127.0.0.1", hm);
 

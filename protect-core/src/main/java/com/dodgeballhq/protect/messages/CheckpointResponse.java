@@ -28,6 +28,8 @@ public class CheckpointResponse {
     public DodgeballApiError[] errors;
     public String version;
     public DodgeballVerification verification;
+    public VerificationStepData stepData;
+    public VerificationStep[] nextSteps;
 
     public boolean isTimeout;
 }

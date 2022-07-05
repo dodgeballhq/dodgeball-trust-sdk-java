@@ -93,7 +93,7 @@ public class Dodgeball {
                 int numFailures = 0;
                 int cumulativeTime = 0;
 
-                while (response == null && numRepeats < 3) {
+                while ((response == null || !response.success) && numRepeats < 3) {
                     CheckpointRequest internalRequest = new CheckpointRequest(
                             request.event,
                             checkpointName,
