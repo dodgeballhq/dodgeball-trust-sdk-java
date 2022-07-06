@@ -197,7 +197,7 @@ public class Dodgeball {
         return false;
     }
 
-    public boolean isAllowed(CheckpointResponse checkpointResponse) {
+    public static boolean isAllowed(CheckpointResponse checkpointResponse) {
         return (
                 checkpointResponse.success &&
                         checkpointResponse.verification != null &&
@@ -205,7 +205,7 @@ public class Dodgeball {
                 checkpointResponse.verification.outcome == Constants.VerificationOutcome.APPROVED);
     }
 
-    public boolean isDenied(CheckpointResponse checkpointResponse) {
+    public static boolean isDenied(CheckpointResponse checkpointResponse) {
         if (checkpointResponse.success && checkpointResponse.verification != null) {
             switch (checkpointResponse.verification.outcome) {
                 case Constants.VerificationOutcome.DENIED:
@@ -218,7 +218,7 @@ public class Dodgeball {
         return false;
     }
 
-    public boolean isUndecided(
+    public static boolean isUndecided(
             CheckpointResponse checkpointResponse
     ) {
         return (
@@ -229,7 +229,7 @@ public class Dodgeball {
         );
     }
 
-    public boolean hasError(CheckpointResponse checkpointResponse){
+    public static boolean hasError(CheckpointResponse checkpointResponse){
         return ((!checkpointResponse.success ||
                         checkpointResponse.verification == null) ||
                         (checkpointResponse.verification.status == Constants.VerificationStatus.FAILED &&
@@ -237,7 +237,7 @@ public class Dodgeball {
                         Constants.VerificationOutcome.ERROR) ||
                                 (checkpointResponse.errors != null && checkpointResponse.errors.length > 0));
     }
-    
+
     static class Builder{
         private static final String DEFAULT_DB_URL = "https://api.dodgeballhq.com";
 
