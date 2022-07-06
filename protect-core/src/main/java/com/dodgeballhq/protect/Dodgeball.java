@@ -4,6 +4,7 @@ import com.dodgeballhq.protect.api.ClientCheckpointData;
 import com.dodgeballhq.protect.api.DodgeballServices;
 import com.sun.javaws.exceptions.InvalidArgumentException;
 import com.sun.javaws.exceptions.MissingFieldException;
+import com.sun.tools.internal.jxc.ap.Const;
 import org.apache.commons.lang3.StringUtils;
 
 import com.dodgeballhq.protect.messages.*;
@@ -182,6 +183,60 @@ public class Dodgeball {
         CheckpointRequest request;
     }
 
+    public static boolean isRunning(CheckpointResponse  checkpointResponse){
+        if (checkpointResponse.success && checkpointResponse.verification != null) {
+            switch (checkpointResponse.verification.status) {
+                case Constants.VerificationStatus.PENDING:
+                case Constants.VerificationStatus.BLOCKED:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean isAllowed(CheckpointResponse checkpointResponse) {
+        return (
+                checkpointResponse.success &&
+                        checkpointResponse.verification != null &&
+                        checkpointResponse.verification.status == Constants.VerificationStatus.COMPLETE &&
+                checkpointResponse.verification.outcome == Constants.VerificationOutcome.APPROVED);
+    }
+
+    public static boolean isDenied(CheckpointResponse checkpointResponse) {
+        if (checkpointResponse.success && checkpointResponse.verification != null) {
+            switch (checkpointResponse.verification.outcome) {
+                case Constants.VerificationOutcome.DENIED:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean isUndecided(
+            CheckpointResponse checkpointResponse
+    ) {
+        return (
+                checkpointResponse.success &&
+                        checkpointResponse.verification != null &&
+                        checkpointResponse.verification.status == Constants.VerificationStatus.COMPLETE &&
+                        checkpointResponse.verification.outcome == Constants.VerificationOutcome.PENDING
+        );
+    }
+
+    public static boolean hasError(CheckpointResponse checkpointResponse){
+        return ((!checkpointResponse.success ||
+                        checkpointResponse.verification == null) ||
+                        (checkpointResponse.verification.status == Constants.VerificationStatus.FAILED &&
+                                checkpointResponse.verification.outcome ==
+                        Constants.VerificationOutcome.ERROR) ||
+                                (checkpointResponse.errors != null && checkpointResponse.errors.length > 0));
+    }
 
     static class Builder{
         private static final String DEFAULT_DB_URL = "https://api.dodgeballhq.com";
