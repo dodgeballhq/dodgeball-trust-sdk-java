@@ -16,8 +16,8 @@ import java.util.concurrent.*;
 public class DodgeballServicesTest {
     @Test
     public void testBasicSend(){
-        String testSecret = "1c29d5d6593011ec9412470128c0fd71";
-        String testDBSourceId = "5c8e04c1-21aa-4af6-aaae-2a2be3c1bd2f";
+        String testSecret = TestValues.TEST_SECRET;
+        String testDBSourceId = TestValues.TEST_DB_SOURCE_ID;
         String checkpointName = "DONATION";
 
         Map<String, Object> hm = new HashMap<String, Object>();
@@ -45,8 +45,8 @@ public class DodgeballServicesTest {
 
     @Test
     public void testBasicAsyncSend() throws Exception{
-        String testSecret = "1c29d5d6593011ec9412470128c0fd71";
-        String testDBSourceId = "5c8e04c1-21aa-4af6-aaae-2a2be3c1bd2f";
+        String testSecret = TestValues.TEST_SECRET;
+        String testDBSourceId = TestValues.TEST_DB_SOURCE_ID;
         String checkpointName = "DONATION";
 
         Map<String, Object> hm = new HashMap<String, Object>();
@@ -55,13 +55,15 @@ public class DodgeballServicesTest {
         hm.put("mfaPhoneNumbers", TestValues.MFA_PHONE_NUMBERS);
 
         Event event = new Event("127.0.0.1", hm);
-
+        CheckpointRequest.Options options = new CheckpointRequest.Options();
+        options.sync = false;
+        options.timeout = 50;
         CheckpointRequest request = new CheckpointRequest(
                 event,
                 checkpointName,
                 testDBSourceId,
                 "test@dodgeballhq.com",
-                null
+                options
         );
 
 

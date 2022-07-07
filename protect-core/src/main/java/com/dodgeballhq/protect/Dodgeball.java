@@ -32,7 +32,8 @@ public class Dodgeball {
 
     public class Delegate{
         public final int BASE_CHECKPOINT_TIMEOUT_MS = 100;
-        public final int MAX_TIMEOUT = 10000;
+        public final int BASE_MAX_CHECKPOINT_TIMEOUT_MS = 10000;
+        public final int MAX_ACTIVE_TIMEOUT = 2000;
         public final int MAX_RETRY_COUNT = 3;
 
         public Delegate(CheckpointRequest request){
@@ -78,8 +79,6 @@ public class Dodgeball {
                         ? BASE_CHECKPOINT_TIMEOUT_MS
                         : options.timeout;
 
-                int maximalTimeout = MAX_TIMEOUT;
-
                 CheckpointRequest.Options internalOptions =
                         new CheckpointRequest.Options(
                                 false,
@@ -123,11 +122,12 @@ public class Dodgeball {
                         response.verification.id;
 
 
-                int maxTimeout = BASE_CHECKPOINT_TIMEOUT_MS;
+                int maxTimeout = BASE_MAX_CHECKPOINT_TIMEOUT_MS;
                 if (options != null) {
                     maxTimeout = options.timeout;
                 }
 
+                isTimeout = (maxTimeout <= cumulativeTime);
                 while ((trivialTimeout ||
                         !isTimeout) &&
                         !isResolved &&
@@ -136,7 +136,7 @@ public class Dodgeball {
                     cumulativeTime += activeTimeout;
 
                     activeTimeout =
-                            activeTimeout < maximalTimeout ? 2 * activeTimeout : activeTimeout;
+                            activeTimeout < MAX_ACTIVE_TIMEOUT ? 2 * activeTimeout : activeTimeout;
 
                     response = DodgeballServices.executeSynchronous(
                             Dodgeball.this.baseUrl,
@@ -166,10 +166,11 @@ public class Dodgeball {
                     throw new Exception("Service Unavailable: Maximum retry count exceeded");
                 }
 
-                if(!isResolved){
-                    throw new Exception("Verification unresolved");
+                if(response == null || response.verification == null){
+                    throw new Exception("Failed to Evaluate");
                 }
 
+                response.isTimeout = response.isTimeout || isTimeout;
                 return response;
             }
             catch (Exception exc){

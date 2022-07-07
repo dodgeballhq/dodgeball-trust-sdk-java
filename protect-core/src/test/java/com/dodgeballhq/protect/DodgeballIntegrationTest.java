@@ -44,12 +44,13 @@ public class DodgeballIntegrationTest {
 
         Event event = new Event("127.0.0.1", hm);
 
+        CheckpointRequest.Options options = new CheckpointRequest.Options(false, 99, null);
         CheckpointRequest request = new CheckpointRequest(
                 event,
                 checkpointName,
                 testDBSourceId,
                 "test@dodgeballhq.com",
-                null
+                options
         );
 
         Dodgeball dodgeball = Dodgeball.builder().
