@@ -171,7 +171,10 @@ public class Dodgeball {
                     throw new Exception("Failed to Evaluate");
                 }
 
-                response.isTimeout = response.isTimeout || isTimeout;
+                if(stringsEqual(response.verification.status, Constants.VerificationStatus.PENDING)) {
+                    response.isTimeout = response.isTimeout || isTimeout;
+                }
+
                 return response;
             }
             catch (Exception exc){
