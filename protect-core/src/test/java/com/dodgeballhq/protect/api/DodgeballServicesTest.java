@@ -3,6 +3,7 @@ package com.dodgeballhq.protect.api;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.Assert.*;
 
+import com.dodgeballhq.protect.TestValues;
 import com.dodgeballhq.protect.messages.*;
 import com.dodgeballhq.protect.api.DodgeballServices;
 
@@ -51,7 +52,7 @@ public class DodgeballServicesTest {
         Map<String, Object> hm = new HashMap<String, Object>();
         hm.put("amount", 30000);
         hm.put("currency", "USD");
-        hm.put("mfaPhoneNumbers", "+16178174021");
+        hm.put("mfaPhoneNumbers", TestValues.MFA_PHONE_NUMBERS);
 
         Event event = new Event("127.0.0.1", hm);
 

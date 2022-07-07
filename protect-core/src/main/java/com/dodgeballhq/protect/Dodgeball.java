@@ -82,9 +82,7 @@ public class Dodgeball {
 
                 CheckpointRequest.Options internalOptions =
                         new CheckpointRequest.Options(
-                                options == null ?
-                                        true :
-                                        options.sync,
+                                false,
                                 activeTimeout,
                                 options == null ? null : options.webhook
                         );
@@ -105,7 +103,7 @@ public class Dodgeball {
                     response = DodgeballServices.executeSynchronous(
                             Dodgeball.this.baseUrl,
                             Dodgeball.this.apiKey,
-                            request
+                            internalRequest
                     );
                     numRepeats += 1;
                     cumulativeTime += activeTimeout;
@@ -117,8 +115,9 @@ public class Dodgeball {
                     return response;
                 }
 
-                boolean isResolved = (response.verification != null &&
-                        response.verification.status != Constants.VerificationStatus.PENDING);
+                boolean isResolved = response.verification != null &&
+                        !stringsEqual(response.verification.status,
+                                Constants.VerificationStatus.PENDING);
                 String verificationId = (response.verification == null) ?
                         null :
                         response.verification.id;
@@ -153,7 +152,7 @@ public class Dodgeball {
                         if (StringUtils.isEmpty(status)) {
                             numFailures += 1;
                         } else {
-                            isResolved = (status != Constants.VerificationStatus.PENDING);
+                            isResolved = !stringsEqual(status,Constants.VerificationStatus.PENDING);
                             numRepeats += 1;
                         }
                     } else {
@@ -201,18 +200,18 @@ public class Dodgeball {
         return (
                 checkpointResponse.success &&
                         checkpointResponse.verification != null &&
-                        checkpointResponse.verification.status == Constants.VerificationStatus.COMPLETE &&
-                checkpointResponse.verification.outcome == Constants.VerificationOutcome.APPROVED);
+                        stringsEqual(
+                                checkpointResponse.verification.status,
+                                Constants.VerificationStatus.COMPLETE) &&
+                        stringsEqual(checkpointResponse.verification.outcome,
+                                Constants.VerificationOutcome.APPROVED));
     }
 
     public static boolean isDenied(CheckpointResponse checkpointResponse) {
         if (checkpointResponse.success && checkpointResponse.verification != null) {
-            switch (checkpointResponse.verification.outcome) {
-                case Constants.VerificationOutcome.DENIED:
-                    return true;
-                default:
-                    return false;
-            }
+            return stringsEqual(
+                    checkpointResponse.verification.outcome,
+                    Constants.VerificationOutcome.DENIED);
         }
 
         return false;
@@ -224,17 +223,24 @@ public class Dodgeball {
         return (
                 checkpointResponse.success &&
                         checkpointResponse.verification != null &&
-                        checkpointResponse.verification.status == Constants.VerificationStatus.COMPLETE &&
-                        checkpointResponse.verification.outcome == Constants.VerificationOutcome.PENDING
+                        stringsEqual(
+                                checkpointResponse.verification.status,
+                                Constants.VerificationStatus.COMPLETE) &&
+                        stringsEqual(
+                                checkpointResponse.verification.outcome,
+                                Constants.VerificationOutcome.PENDING)
         );
     }
 
     public static boolean hasError(CheckpointResponse checkpointResponse){
         return ((!checkpointResponse.success ||
                         checkpointResponse.verification == null) ||
-                        (checkpointResponse.verification.status == Constants.VerificationStatus.FAILED &&
-                                checkpointResponse.verification.outcome ==
-                        Constants.VerificationOutcome.ERROR) ||
+                        (stringsEqual(
+                                checkpointResponse.verification.status,
+                                Constants.VerificationStatus.FAILED) &&
+                                stringsEqual(
+                                        checkpointResponse.verification.outcome,
+                                        Constants.VerificationOutcome.ERROR)) ||
                                 (checkpointResponse.errors != null && checkpointResponse.errors.length > 0));
     }
 
@@ -263,6 +269,14 @@ public class Dodgeball {
 
         private String dbUrl;
         private String apiKey;
+    }
+
+    private static boolean stringsEqual(String lhs, String rhs){
+        if(lhs == null || rhs == null){
+            return lhs == null && rhs == null;
+        }
+
+        return lhs.equals(rhs);
     }
 
     String baseUrl;
