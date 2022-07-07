@@ -11,5 +11,6 @@ public interface ICheckpoint {
             @Header("dodgeball-secret-key") String apiKey,
             @Header("dodgeball-source-id") String dbSourceId,
             @Header("dodgeball-custom-source-id") String clientId,
+            @Header("dodgeball-verification-id") String priorVerificationId,
             @Body ClientCheckpointData body);
 }

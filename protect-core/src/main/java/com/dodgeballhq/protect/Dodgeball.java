@@ -97,7 +97,8 @@ public class Dodgeball {
                             checkpointName,
                             request.dodgeballId,
                             request.userId,
-                            internalOptions);
+                            internalOptions,
+                            request.priorCheckpointId);
 
                     response = DodgeballServices.executeSynchronous(
                             Dodgeball.this.baseUrl,

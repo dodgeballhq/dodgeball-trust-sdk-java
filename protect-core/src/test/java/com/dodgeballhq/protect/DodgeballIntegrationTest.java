@@ -67,6 +67,13 @@ public class DodgeballIntegrationTest {
             finalState = "Allowed";
         }
         else if (dodgeball.isRunning(checkpointResponse)) {
+            if(checkpointResponse.isTimeout){
+                request.priorCheckpointId = checkpointResponse.verification.id;
+                Thread.sleep(1000);
+                responseFuture = dodgeball.checkpoint(request);
+                checkpointResponse = responseFuture.join();
+                finalState = checkpointResponse.verification.status;
+            }
             finalState = "Running";
       } else if (dodgeball.isDenied(checkpointResponse)) {
             finalState = "Denied";

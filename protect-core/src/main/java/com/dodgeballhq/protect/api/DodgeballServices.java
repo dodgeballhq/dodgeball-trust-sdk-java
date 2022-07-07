@@ -118,6 +118,7 @@ public class DodgeballServices {
                     dbApiKey,
                     request.dodgeballId,
                     request.userId,
+                    request.priorCheckpointId,
                     checkpointData
             );
 
@@ -174,6 +175,7 @@ public class DodgeballServices {
                     dbApiKey,
                     request.dodgeballId,
                     request.userId,
+                    request.priorCheckpointId,
                     checkpointData
             );
 

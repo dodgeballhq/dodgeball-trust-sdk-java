@@ -34,6 +34,21 @@ public class CheckpointRequest {
         this.options = (options == null)?new Options():options;
     }
 
+    public CheckpointRequest(
+            Event event,
+            String checkpointName,
+            String dodgeballId,
+            String userId,
+            Options options,
+            String priorCheckpointId){
+        this.event = event;
+        this.checkpointName = checkpointName;
+        this.dodgeballId = dodgeballId;
+        this.userId = userId;
+        this.options = (options == null)?new Options():options;
+        this.priorCheckpointId = priorCheckpointId;
+    }
+
     /**
      * Event encapsulating this checkpoint.
      */
