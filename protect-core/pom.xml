@@ -4,14 +4,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.dodgeballhq.protect.java</groupId>
-    <artifactId>protect-parent</artifactId>
-    <version>0.9.0-SNAPSHOT</version>
+    <groupId>com.dodgeballhq.protect</groupId>
+    <artifactId>protect-java</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>protect-core</artifactId>
-  <version>0.9.0</version>
-  <name>Analytics for Java (Core)</name>
+  <version>1.0.0</version>
+  <name>Checkpoint Protect for Java (Core)</name>
   <dependencies>
       <dependency>
       <groupId>org.apache.commons</groupId>
