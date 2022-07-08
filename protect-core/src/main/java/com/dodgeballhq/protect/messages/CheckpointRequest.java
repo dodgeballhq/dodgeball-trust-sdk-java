@@ -1,19 +1,44 @@
 package com.dodgeballhq.protect.messages;
 
+/**
+ * Input class defining a client Access Request
+ */
 public class CheckpointRequest {
+
+    /**
+     * Invocation options.  Mostly used to pass in timeout information and callback URLs
+     */
     public static class Options{
         public Options(
         ){
         }
 
+        /**
+         * Constructor
+         *
+         * @param sync: Whether the server should block until this workflow has executed
+         * @param timeout: Bounded timeout
+         * @param webhook: Callback URL
+         */
         public Options(boolean sync, int timeout, String webhook){
             this.timeout = timeout;
             this.sync = sync;
             this.webhook = webhook;
         }
 
+        /**
+         * Request Timeout in MS
+         */
         public int timeout = -1;
+
+        /*
+         * True if Dodgeball should block until a response is provided or timeout is reached
+         */
         public boolean sync = true;
+
+        /*
+         * Webhook URL in case of async execution.
+         */
         public String webhook;
     }
 
@@ -21,6 +46,14 @@ public class CheckpointRequest {
         this.options = new Options();
     }
 
+    /**
+     * Constructor
+     *
+     * @param event Client context, for example email, transaction amount, product ids, etc.
+     * @param checkpointName Name of workflow to execute
+     * @param dodgeballId Session ID information
+     * @param userId  ID of the underlying user.
+     */
     public CheckpointRequest(
             Event event,
             String checkpointName,

@@ -7,8 +7,8 @@
   <artifactId>protect-java</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Analytics for Java (Parent)</name>
-  <description>The hassle-free way to add analytics to your Android app.</description>
+  <name>DodgeBall Protect for Java (Parent)</name>
+  <description>Protect your software with DodgeBall</description>
   <url>https://github.com/dodgeballhq/dodgeball-trust-sdk-java</url>
 
     <licenses>
@@ -161,13 +161,23 @@
           </plugin>
           <plugin>
               <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-site-plugin</artifactId>
+              <version>3.7.1</version>
+          </plugin>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-project-info-reports-plugin</artifactId>
+              <version>3.0.0</version>
+          </plugin>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-surefire-plugin</artifactId>
               <version>2.22.2</version>
           </plugin>
       </plugins>
     </pluginManagement>
   </build>
-    
+
     <profiles>
         <profile>
             <id>ci-cd</id>
@@ -199,5 +209,19 @@
             </build>
         </profile>
     </profiles>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.4.0</version>
+                <configuration>
+                    <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
+                    <show>public</show>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
 
 </project>

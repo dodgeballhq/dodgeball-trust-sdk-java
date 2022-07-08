@@ -1,18 +1,28 @@
 package com.dodgeballhq.protect;
+import org.apache.commons.lang3.StringUtils;
+import java.util.concurrent.CompletableFuture;
 
 import com.dodgeballhq.protect.api.ClientCheckpointData;
 import com.dodgeballhq.protect.api.DodgeballServices;
-import com.sun.javaws.exceptions.InvalidArgumentException;
-import com.sun.javaws.exceptions.MissingFieldException;
-import com.sun.tools.internal.jxc.ap.Const;
-import org.apache.commons.lang3.StringUtils;
-
 import com.dodgeballhq.protect.messages.*;
-import org.omg.CORBA.portable.ApplicationException;
-
-import java.util.concurrent.CompletableFuture;
-
+/**
+ * The primary service class in the protect-core library.  Clients will:
+ *    - Initialize an instance through calls to Dodgeball.builder()
+ *    - Configure API Keys through setApiKeys
+ *    - Invoke Builder.build()
+ *
+ *  Once created, invoke using Dodgeball.checkpoint
+ *
+ * @author Andrew Schwartz
+ *
+ */
 public class Dodgeball {
+
+    /**
+     *
+     * @param apiKey: Client Server Side API Key
+     * @param url: Builder-provided URL.
+     */
     Dodgeball(
             String apiKey,
             String url){
@@ -20,16 +30,180 @@ public class Dodgeball {
         this.baseUrl = url;
     }
 
+    /**
+     * Static Constructor for a Builder instance
+     * @return: Builder without API Keys targeting Prod Instances
+     */
     public static Builder builder(){
         return new Builder();
     }
 
+    /**
+     * Request to validate access to a protected resource.
+     *
+     * @param request: Access request properties
+     * @return: Async function object monitoring a DodgeBall Workflow Execution
+     */
     public CompletableFuture<CheckpointResponse> checkpoint(
             CheckpointRequest request){
         Delegate toCall = this.new Delegate(request);
         return CompletableFuture.supplyAsync(toCall::call);
     }
 
+    /**
+     * Accessor to determine whether access is allowed
+     *
+     * @param checkpointResponse
+     * @return: True if the Workflow allows access
+     */
+    public static boolean isAllowed(CheckpointResponse checkpointResponse) {
+        return (
+                checkpointResponse.success &&
+                        checkpointResponse.verification != null &&
+                        stringsEqual(
+                                checkpointResponse.verification.status,
+                                Constants.VerificationStatus.COMPLETE) &&
+                        stringsEqual(checkpointResponse.verification.outcome,
+                                Constants.VerificationOutcome.APPROVED));
+    }
+
+    /**
+     * Accessor indicating whether the checkpoint workflow is still processing
+     *
+     * @param checkpointResponse
+     * @return True if the workflow is still in process
+     */
+    public static boolean isRunning(CheckpointResponse  checkpointResponse){
+        if (checkpointResponse.success && checkpointResponse.verification != null) {
+            switch (checkpointResponse.verification.status) {
+                case Constants.VerificationStatus.PENDING:
+                case Constants.VerificationStatus.BLOCKED:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Accessor to determine whether the request was denied
+     *
+     * @param checkpointResponse
+     * @return: True if the workflow denied access
+     */
+    public static boolean isDenied(CheckpointResponse checkpointResponse) {
+        if (checkpointResponse.success && checkpointResponse.verification != null) {
+            return stringsEqual(
+                    checkpointResponse.verification.outcome,
+                    Constants.VerificationOutcome.DENIED);
+        }
+
+        return false;
+    }
+
+    /**
+     * Accessor to determine whether no conclusion was reached
+     *
+     * @param checkpointResponse
+     * @return: True if the workflow completed successfully, but no access decision was
+     * taken.
+     */
+    public static boolean isUndecided(
+            CheckpointResponse checkpointResponse
+    ) {
+        return (
+                checkpointResponse.success &&
+                        checkpointResponse.verification != null &&
+                        stringsEqual(
+                                checkpointResponse.verification.status,
+                                Constants.VerificationStatus.COMPLETE) &&
+                        stringsEqual(
+                                checkpointResponse.verification.outcome,
+                                Constants.VerificationOutcome.PENDING)
+        );
+    }
+
+    /**
+     * Indicates that a Workflow Execution Error occurred.
+     *
+     * @param checkpointResponse
+     * @return: True if the workflow received an error
+     */
+    public static boolean hasError(CheckpointResponse checkpointResponse){
+        return ((!checkpointResponse.success ||
+                        checkpointResponse.verification == null) ||
+                        (stringsEqual(
+                                checkpointResponse.verification.status,
+                                Constants.VerificationStatus.FAILED) &&
+                                stringsEqual(
+                                        checkpointResponse.verification.outcome,
+                                        Constants.VerificationOutcome.ERROR)) ||
+                                (checkpointResponse.errors != null && checkpointResponse.errors.length > 0));
+    }
+
+    /**
+     * Utility class used to construct Dodgeball instances
+     */
+    public static class Builder{
+        private static final String DEFAULT_DB_URL = "https://api.dodgeballhq.com";
+        private static final String SANDBOX_DB_URL = "https://api.sandbox.dodgeballhq.com";
+
+        /**
+         * Method to convert input configuration into an active Runtime Object
+         *
+         * @return: Configured Dodgeball instance for checkpointing.
+         */
+        public Dodgeball build(){
+            if(StringUtils.isEmpty(this.apiKey)){
+                throw new IllegalStateException("API Keys must be set");
+            }
+            return new Dodgeball(
+                    this.apiKey,
+                    StringUtils.isEmpty(this.dbUrl)? DEFAULT_DB_URL: this.dbUrl
+            );
+        }
+
+        /**
+         * Method to pass in client API keys
+         *
+         * @param apiKey: Client secret API Key
+         * @return: this
+         */
+        public Builder setApiKeys(String apiKey){
+            this.apiKey = apiKey;
+            return this;
+        }
+
+        /**
+         * Method to indicate that this integration is performed in Sandbox
+         *
+         * @return: this
+         */
+        public Builder setSandbox(){
+            return this.setDbUrl(SANDBOX_DB_URL);
+        }
+
+        /**
+         * Method serving primarily for testing, redirecting to a specified DB Server.
+         *
+         * @param dbUrl: API server URL
+         * @return this
+         */
+        public Builder setDbUrl(String dbUrl){
+            this.dbUrl = dbUrl;
+            return this;
+        }
+
+        private String dbUrl;
+        private String apiKey;
+    }
+
+
+    /**
+     * Utility class leveraged in Async calls.
+     */
     public class Delegate{
         public final int BASE_CHECKPOINT_TIMEOUT_MS = 100;
         public final int BASE_MAX_CHECKPOINT_TIMEOUT_MS = 10000;
@@ -51,21 +225,18 @@ public class Dodgeball {
                 String checkpointName = request.checkpointName;
                 // Validate required parameters are present
                 if (checkpointName == null) {
-                    throw new InvalidArgumentException(
-                            new String[]{"checkpointName: must not be null" }
-                    );
+                    throw new RuntimeException(
+                            "checkpointName: must not be null");
                 }
 
                 if (request.event == null) {
                     throw new IllegalArgumentException("event: must not be null");
                 } else if (StringUtils.isEmpty(request.event.ip)) {
-                    throw new InvalidArgumentException(
-                            new String[]{"event.ip must be provided" });
+                    throw new RuntimeException("event.ip must be provided");
                 }
 
                 if (StringUtils.isEmpty(request.dodgeballId)) {
-                    throw new InvalidArgumentException(
-                            new String[]{"dodgeballId: must be provided" });
+                    throw new RuntimeException("dodgeballId: must be provided");
                 }
 
                 CheckpointRequest.Options options = request.options;
@@ -185,95 +356,6 @@ public class Dodgeball {
         }
 
         CheckpointRequest request;
-    }
-
-    public static boolean isRunning(CheckpointResponse  checkpointResponse){
-        if (checkpointResponse.success && checkpointResponse.verification != null) {
-            switch (checkpointResponse.verification.status) {
-                case Constants.VerificationStatus.PENDING:
-                case Constants.VerificationStatus.BLOCKED:
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        return false;
-    }
-
-    public static boolean isAllowed(CheckpointResponse checkpointResponse) {
-        return (
-                checkpointResponse.success &&
-                        checkpointResponse.verification != null &&
-                        stringsEqual(
-                                checkpointResponse.verification.status,
-                                Constants.VerificationStatus.COMPLETE) &&
-                        stringsEqual(checkpointResponse.verification.outcome,
-                                Constants.VerificationOutcome.APPROVED));
-    }
-
-    public static boolean isDenied(CheckpointResponse checkpointResponse) {
-        if (checkpointResponse.success && checkpointResponse.verification != null) {
-            return stringsEqual(
-                    checkpointResponse.verification.outcome,
-                    Constants.VerificationOutcome.DENIED);
-        }
-
-        return false;
-    }
-
-    public static boolean isUndecided(
-            CheckpointResponse checkpointResponse
-    ) {
-        return (
-                checkpointResponse.success &&
-                        checkpointResponse.verification != null &&
-                        stringsEqual(
-                                checkpointResponse.verification.status,
-                                Constants.VerificationStatus.COMPLETE) &&
-                        stringsEqual(
-                                checkpointResponse.verification.outcome,
-                                Constants.VerificationOutcome.PENDING)
-        );
-    }
-
-    public static boolean hasError(CheckpointResponse checkpointResponse){
-        return ((!checkpointResponse.success ||
-                        checkpointResponse.verification == null) ||
-                        (stringsEqual(
-                                checkpointResponse.verification.status,
-                                Constants.VerificationStatus.FAILED) &&
-                                stringsEqual(
-                                        checkpointResponse.verification.outcome,
-                                        Constants.VerificationOutcome.ERROR)) ||
-                                (checkpointResponse.errors != null && checkpointResponse.errors.length > 0));
-    }
-
-    public static class Builder{
-        private static final String DEFAULT_DB_URL = "https://api.dodgeballhq.com";
-
-        public Dodgeball build(){
-            if(StringUtils.isEmpty(this.apiKey)){
-                throw new IllegalStateException("API Keys must be set");
-            }
-            return new Dodgeball(
-                    this.apiKey,
-                    StringUtils.isEmpty(this.dbUrl)? DEFAULT_DB_URL: this.dbUrl
-            );
-        }
-
-        public Builder setApiKeys(String apiKey){
-            this.apiKey = apiKey;
-            return this;
-        }
-
-        public Builder setDbUrl(String dbUrl){
-            this.dbUrl = dbUrl;
-            return this;
-        }
-
-        private String dbUrl;
-        private String apiKey;
     }
 
     private static boolean stringsEqual(String lhs, String rhs){
