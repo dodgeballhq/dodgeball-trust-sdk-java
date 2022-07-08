@@ -25,6 +25,18 @@ public class CheckpointRequest {
             Event event,
             String checkpointName,
             String dodgeballId,
+            String userId){
+        this.event = event;
+        this.checkpointName = checkpointName;
+        this.dodgeballId = dodgeballId;
+        this.userId = userId;
+        this.options = new Options();
+    }
+
+    public CheckpointRequest(
+            Event event,
+            String checkpointName,
+            String dodgeballId,
             String userId,
             Options options){
         this.event = event;
