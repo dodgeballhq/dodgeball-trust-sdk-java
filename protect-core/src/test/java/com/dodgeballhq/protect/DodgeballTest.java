@@ -48,8 +48,7 @@ public class DodgeballTest {
                 event,
                 checkpointName,
                 testDBSourceId,
-                "test@dodgeballhq.com",
-                null
+                "test@dodgeballhq.com"
         );
 
         Dodgeball db = Dodgeball.builder().

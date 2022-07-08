@@ -249,7 +249,7 @@ public class Dodgeball {
                                 (checkpointResponse.errors != null && checkpointResponse.errors.length > 0));
     }
 
-    static class Builder{
+    public static class Builder{
         private static final String DEFAULT_DB_URL = "https://api.dodgeballhq.com";
 
         public Dodgeball build(){
