@@ -4,14 +4,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.dodgeballhq.protect.java</groupId>
-    <artifactId>protect-parent</artifactId>
-    <version>0.9.0-SNAPSHOT</version>
+    <groupId>com.dodgeballhq.protect</groupId>
+    <artifactId>protect-java</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>protect-core</artifactId>
-  <version>0.9.0</version>
-  <name>Analytics for Java (Core)</name>
+  <version>1.0.0</version>
+  <name>Checkpoint Protect for Java (Core)</name>
   <dependencies>
       <dependency>
       <groupId>org.apache.commons</groupId>
@@ -55,4 +55,43 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.4.0</version>
+                <configuration>
+                    <show>private</show>
+                    <nohelp>true</nohelp>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.7.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>3.0.0</version>
+            </plugin>
+        </plugins>
+    </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.4.0</version>
+                <configuration>
+                    <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
+                    <show>public</show>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
 </project>

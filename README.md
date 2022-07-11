@@ -32,7 +32,6 @@ CheckpointRequest request = new CheckpointRequest(
 Dodgeball dodgeball= Dodgeball.
  builder().
  setApiKeys(TestValues.TEST_SECRET).
- setDbUrl("http://localhost:3001").
  build();
 
 CompletableFuture<CheckpointResponse> responseFuture = dodgeball.checkpoint(request);

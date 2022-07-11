@@ -3,13 +3,32 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.dodgeballhq.protect.java</groupId>
-  <artifactId>protect-parent</artifactId>
-  <version>0.9.0-SNAPSHOT</version>
+  <groupId>com.dodgeballhq.protect</groupId>
+  <artifactId>protect-java</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Analytics for Java (Parent)</name>
-  <description>The hassle-free way to add analytics to your Android app.</description>
+  <name>DodgeBall Protect for Java (Parent)</name>
+  <description>Protect your software with DodgeBall</description>
   <url>https://github.com/dodgeballhq/dodgeball-trust-sdk-java</url>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>teagup</id>
+            <name>Patrick Teague</name>
+            <email>it@dodgeballhq.com</email>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git@github.com:dodgeballhq/dodgeball-trust-sdk-java.git</connection>
+        <developerConnection>scm:git:ssh://github.com:dodgeballhq/dodgeball-trust-sdk-java.git</developerConnection>
+        <url>https://github.com/dodgeballhq/dodgeball-trust-sdk-java</url>
+    </scm>
 
   <modules>
     <module>protect-core</module>
@@ -37,13 +56,6 @@
     <mockito.version>4.4.0</mockito.version>
     <assertj.version>3.22.0</assertj.version>
   </properties>
-
-  <licenses>
-    <license>
-      <name>The MIT License (MIT)</name>
-      <url>http://opensource.org/licenses/MIT</url>
-    </license>
-  </licenses>
 
   <dependencyManagement>
     <dependencies>
@@ -110,6 +122,17 @@
   <build>
     <pluginManagement>
       <plugins>
+          <plugin>
+              <groupId>org.sonatype.plugins</groupId>
+              <artifactId>nexus-staging-maven-plugin</artifactId>
+              <version>1.6.7</version>
+              <extensions>true</extensions>
+              <configuration>
+                  <serverId>ossrh</serverId>
+                  <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                  <autoReleaseAfterClose>true</autoReleaseAfterClose>
+              </configuration>
+          </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -121,7 +144,101 @@
             <showWarnings>true</showWarnings>
           </configuration>
         </plugin>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-source-plugin</artifactId>
+              <version>3.2.1</version>
+              <executions>
+                  <execution>
+                      <id>attach-sources</id>
+                      <goals>
+                          <goal>jar-no-fork</goal>
+                      </goals>
+                  </execution>
+              </executions>
+          </plugin>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-javadoc-plugin</artifactId>
+              <version>3.2.0</version>
+              <executions>
+                  <execution>
+                      <id>attach-javadocs</id>
+                      <goals>
+                          <goal>jar</goal>
+                      </goals>
+                  </execution>
+              </executions>
+          </plugin>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-site-plugin</artifactId>
+              <version>3.7.1</version>
+          </plugin>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-project-info-reports-plugin</artifactId>
+              <version>3.0.0</version>
+          </plugin>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <version>2.22.2</version>
+          </plugin>
       </plugins>
     </pluginManagement>
   </build>
+
+    <profiles>
+        <profile>
+            <id>ci-cd</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- Prevent gpg from using pinentry programs. Fixes: gpg: signing
+                                        failed: Inappropriate ioctl for device -->
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.4.0</version>
+                <configuration>
+                    <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
+                    <show>public</show>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <distributionManagement>
+            <snapshotRepository>
+                <id>ossrh</id>
+                <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+            </snapshotRepository>
+    </distributionManagement>
 </project>
