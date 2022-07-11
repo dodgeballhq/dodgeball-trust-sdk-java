@@ -34,7 +34,6 @@ public class DodgeballIntegrationTest {
     @Test
     public void testStandardPipeline() throws Exception{
         String testSecret = TestValues.TEST_SECRET;
-        String testDBSourceId = TestValues.TEST_DB_SOURCE_ID;
         String checkpointName = TestValues.TEST_CHECKPOINT_NAME;
 
         Map<String, Object> hm = new HashMap<String, Object>();
@@ -47,8 +46,9 @@ public class DodgeballIntegrationTest {
         CheckpointRequest request = new CheckpointRequest(
                 event,
                 checkpointName,
-                testDBSourceId,
-                "test@dodgeballhq.com",
+                TestValues.TEST_SOURCE_TOKEN,
+                TestValues.TEST_SESSION_ID,
+                TestValues.TEST_CUSTOMER_ID,
                 null
         );
 
@@ -87,9 +87,6 @@ public class DodgeballIntegrationTest {
 
     @Test
     public void testStandardPipelineRetry() throws Exception{
-        String testSecret = TestValues.TEST_SECRET;
-        String testDBSourceId = TestValues.TEST_DB_SOURCE_ID;
-        String checkpointName = TestValues.TEST_CHECKPOINT_NAME;
 
         Map<String, Object> hm = new HashMap<String, Object>();
         hm.put("amount", 30000);
@@ -101,14 +98,15 @@ public class DodgeballIntegrationTest {
         CheckpointRequest.Options options = new CheckpointRequest.Options(false, 99, null);
         CheckpointRequest request = new CheckpointRequest(
                 event,
-                checkpointName,
-                testDBSourceId,
-                "test@dodgeballhq.com",
+                TestValues.TEST_CHECKPOINT_NAME,
+                TestValues.TEST_SOURCE_TOKEN,
+                TestValues.TEST_SESSION_ID,
+                TestValues.TEST_CUSTOMER_ID,
                 options
         );
 
         Dodgeball dodgeball = Dodgeball.builder().
-                setApiKeys(testSecret).
+                setApiKeys(TestValues.TEST_SECRET).
                 setDbUrl("http://localhost:3001").
                 build();
 

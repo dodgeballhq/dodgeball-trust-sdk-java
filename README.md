@@ -26,8 +26,8 @@ Event event = new Event("127.0.0.1", hm);
 CheckpointRequest request = new CheckpointRequest(
  event,
  "CHECKPOINT NAME",
- "Your DB Session ID",
- "User ID");
+ "Your App Session ID",
+ "Your User ID");
 
 Dodgeball dodgeball= Dodgeball.
  builder().

@@ -34,7 +34,6 @@ public class DodgeballTest {
     @Test
     public void testSimpleCheckpoint() throws Exception{
         String testSecret = TestValues.TEST_SECRET;
-        String testDBSourceId = TestValues.TEST_DB_SOURCE_ID;
         String checkpointName = TestValues.TEST_CHECKPOINT_NAME;
 
         Map<String, Object> hm = new HashMap<String, Object>();
@@ -47,8 +46,9 @@ public class DodgeballTest {
         CheckpointRequest request = new CheckpointRequest(
                 event,
                 checkpointName,
-                testDBSourceId,
-                "test@dodgeballhq.com"
+                TestValues.TEST_SOURCE_TOKEN,
+                TestValues.TEST_SESSION_ID,
+                TestValues.TEST_CUSTOMER_ID
         );
 
         Dodgeball db = Dodgeball.builder().

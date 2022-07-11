@@ -116,8 +116,9 @@ public class DodgeballServices {
             ICheckpoint checkpoint = retrofit.create(ICheckpoint.class);
             Call<CheckpointResponse> toCall = checkpoint.callCheckpoint(
                     dbApiKey,
-                    request.dodgeballId,
-                    request.userId,
+                    request.sourceToken,
+                    request.sessionExternalId,
+                    request.customerExternalId,
                     request.priorCheckpointId,
                     checkpointData
             );
@@ -173,8 +174,9 @@ public class DodgeballServices {
             ICheckpoint checkpoint = retrofit.create(ICheckpoint.class);
             Call<CheckpointResponse> toCall =  checkpoint.callCheckpoint(
                     dbApiKey,
-                    request.dodgeballId,
-                    request.userId,
+                    request.sourceToken,
+                    request.customerExternalId,
+                    request.sessionExternalId,
                     request.priorCheckpointId,
                     checkpointData
             );

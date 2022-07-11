@@ -51,45 +51,51 @@ public class CheckpointRequest {
      *
      * @param event Client context, for example email, transaction amount, product ids, etc.
      * @param checkpointName Name of workflow to execute
-     * @param dodgeballId Session ID information
+     * @param sourceToken Session ID information
      * @param userId  ID of the underlying user.
      */
     public CheckpointRequest(
             Event event,
             String checkpointName,
-            String dodgeballId,
-            String userId){
+            String sourceToken,
+            String sessionExternalId,
+            String customerExternalId){
         this.event = event;
         this.checkpointName = checkpointName;
-        this.dodgeballId = dodgeballId;
-        this.userId = userId;
+        this.sourceToken = sourceToken;
+        this.sessionExternalId = sessionExternalId;
+        this.customerExternalId = customerExternalId;
         this.options = new Options();
     }
 
     public CheckpointRequest(
             Event event,
             String checkpointName,
-            String dodgeballId,
-            String userId,
+            String sourceToken,
+            String sessionExternalId,
+            String customerExternalId,
             Options options){
         this.event = event;
         this.checkpointName = checkpointName;
-        this.dodgeballId = dodgeballId;
-        this.userId = userId;
+        this.sourceToken = sourceToken;
+        this.sessionExternalId = sessionExternalId;
+        this.customerExternalId = customerExternalId;
         this.options = (options == null)?new Options():options;
     }
 
     public CheckpointRequest(
             Event event,
             String checkpointName,
-            String dodgeballId,
-            String userId,
+            String sourceToken,
+            String sessionExternalId,
+            String customerExternalId,
             Options options,
             String priorCheckpointId){
         this.event = event;
         this.checkpointName = checkpointName;
-        this.dodgeballId = dodgeballId;
-        this.userId = userId;
+        this.sourceToken = sourceToken;
+        this.sessionExternalId = sessionExternalId;
+        this.customerExternalId = customerExternalId;
         this.options = (options == null)?new Options():options;
         this.priorCheckpointId = priorCheckpointId;
     }
@@ -105,14 +111,19 @@ public class CheckpointRequest {
     public String checkpointName;
 
     /**
-     * Session ID provided by DodgeBall on SDK initialization
+     * Source Token provided by DodgeBall to the Front End
      */
-    public String dodgeballId;
+    public String sourceToken;
 
     /**
-     * Permanent ID for this customer.
+     * Session ID provided by the App
      */
-    public String userId;
+    public String sessionExternalId;
+
+    /**
+     * Customer ID provided by the App
+     */
+    public String customerExternalId;
 
     /**
      * ID provided by an earlier checkpoint if this query is based off that.

@@ -235,8 +235,8 @@ public class Dodgeball {
                     throw new RuntimeException("event.ip must be provided");
                 }
 
-                if (StringUtils.isEmpty(request.dodgeballId)) {
-                    throw new RuntimeException("dodgeballId: must be provided");
+                if (StringUtils.isEmpty(request.sourceToken)) {
+                    throw new RuntimeException("sourceToken: must be provided");
                 }
 
                 CheckpointRequest.Options options = request.options;
@@ -266,8 +266,9 @@ public class Dodgeball {
                     CheckpointRequest internalRequest = new CheckpointRequest(
                             request.event,
                             checkpointName,
-                            request.dodgeballId,
-                            request.userId,
+                            request.sourceToken,
+                            request.sessionExternalId,
+                            request.customerExternalId,
                             internalOptions,
                             request.priorCheckpointId);
 

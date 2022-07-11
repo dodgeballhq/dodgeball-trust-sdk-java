@@ -17,7 +17,6 @@ public class DodgeballServicesTest {
     @Test
     public void testBasicSend(){
         String testSecret = TestValues.TEST_SECRET;
-        String testDBSourceId = TestValues.TEST_DB_SOURCE_ID;
         String checkpointName = "DONATION";
 
         Map<String, Object> hm = new HashMap<String, Object>();
@@ -29,8 +28,9 @@ public class DodgeballServicesTest {
         CheckpointRequest request = new CheckpointRequest(
                 event,
                 checkpointName,
-                testDBSourceId,
-                "test@dodgeballhq.com",
+                TestValues.TEST_SOURCE_TOKEN,
+                TestValues.TEST_SESSION_ID,
+                TestValues.TEST_CUSTOMER_ID,
                 null
         );
 
@@ -46,7 +46,6 @@ public class DodgeballServicesTest {
     @Test
     public void testBasicAsyncSend() throws Exception{
         String testSecret = TestValues.TEST_SECRET;
-        String testDBSourceId = TestValues.TEST_DB_SOURCE_ID;
         String checkpointName = "DONATION";
 
         Map<String, Object> hm = new HashMap<String, Object>();
@@ -61,8 +60,9 @@ public class DodgeballServicesTest {
         CheckpointRequest request = new CheckpointRequest(
                 event,
                 checkpointName,
-                testDBSourceId,
-                "test@dodgeballhq.com",
+                TestValues.TEST_SOURCE_TOKEN,
+                TestValues.TEST_SESSION_ID,
+                TestValues.TEST_CUSTOMER_ID,
                 options
         );
 

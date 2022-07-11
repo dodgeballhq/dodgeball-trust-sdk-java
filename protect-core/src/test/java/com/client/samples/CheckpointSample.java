@@ -21,8 +21,9 @@ public class CheckpointSample {
        CheckpointRequest request = new CheckpointRequest(
                event,
                TestValues.TEST_CHECKPOINT_NAME,
-               TestValues.TEST_DB_SOURCE_ID,
-               "test@dodgeballhq.com");
+               TestValues.TEST_SOURCE_TOKEN,
+               TestValues.TEST_SESSION_ID,
+               TestValues.TEST_CUSTOMER_ID);
 
        Dodgeball dodgeball= Dodgeball.
                builder().
