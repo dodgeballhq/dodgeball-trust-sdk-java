@@ -9,9 +9,19 @@ import com.dodgeballhq.protect.messages.CheckpointRequest;
 import com.dodgeballhq.protect.messages.Event;
 
 
-
+/**
+ *
+ */
 public class ClientCheckpointData {
+    /**
+     *
+     */
     public static class ApiEvent{
+        /**
+         *
+         * @param eventType
+         * @param data
+         */
         public ApiEvent(String eventType, Map<String, Object> data){
             this.type = eventType;
             this.data = data;
@@ -26,6 +36,10 @@ public class ClientCheckpointData {
         public WebhookData(){
         }
 
+        /**
+         *
+         * @param url
+         */
         public WebhookData(String url){
             this.url = url;
         }
@@ -38,6 +52,12 @@ public class ClientCheckpointData {
             this.sync = true;
         }
 
+        /**
+         *
+         * @param sync
+         * @param timeout
+         * @param webhook
+         */
         public ApiOptions(
                 boolean sync,
                 int timeout,
@@ -50,6 +70,10 @@ public class ClientCheckpointData {
             }
         }
 
+        /**
+         *
+         * @param options
+         */
         public ApiOptions( CheckpointRequest.Options options){
             this.sync = options.sync;
             this.timeout = options.timeout;
@@ -67,6 +91,11 @@ public class ClientCheckpointData {
         this.options = null;
     }
 
+    /**
+     *
+     * @param eventName
+     * @param event
+     */
     public ClientCheckpointData(
             String eventName,
             Event event
@@ -75,6 +104,10 @@ public class ClientCheckpointData {
         this.options = null;
     }
 
+    /**
+     *
+     * @param request
+     */
     public ClientCheckpointData(
             CheckpointRequest request
     ){

@@ -1,17 +1,16 @@
 package com.dodgeballhq.protect.api;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.Assert.*;
 
 import com.dodgeballhq.protect.TestValues;
 import com.dodgeballhq.protect.messages.*;
-import com.dodgeballhq.protect.api.DodgeballServices;
 
 import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.*;
+
+import static org.junit.Assert.assertTrue;
 
 public class DodgeballServicesTest {
     @Test

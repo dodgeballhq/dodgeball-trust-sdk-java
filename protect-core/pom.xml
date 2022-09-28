@@ -6,12 +6,13 @@
   <parent>
     <groupId>com.dodgeballhq.protect</groupId>
     <artifactId>protect-java</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
   </parent>
 
   <artifactId>protect-core</artifactId>
   <version>1.0.0</version>
   <name>Checkpoint Protect for Java (Core)</name>
+  <packaging>jar</packaging>
   <dependencies>
       <dependency>
       <groupId>org.apache.commons</groupId>
