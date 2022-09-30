@@ -1,7 +1,5 @@
 package com.dodgeballhq.protect.api;
 
-import com.dodgeballhq.protect.Dodgeball;
-import jdk.nashorn.internal.codegen.CompilerConstants;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;

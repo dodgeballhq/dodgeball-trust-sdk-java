@@ -9,6 +9,9 @@ public class CheckpointRequest {
      * Invocation options.  Mostly used to pass in timeout information and callback URLs
      */
     public static class Options{
+        /**
+         * Constructor
+         */
         public Options(
         ){
         }
@@ -31,17 +34,19 @@ public class CheckpointRequest {
          */
         public int timeout = -1;
 
-        /*
+        /**
          * True if Dodgeball should block until a response is provided or timeout is reached
          */
         public boolean sync = true;
 
-        /*
+        /**
          * Webhook URL in case of async execution.
          */
         public String webhook;
     }
-
+    /**
+     * Constructor
+     */
     public CheckpointRequest(){
         this.options = new Options();
     }
@@ -52,7 +57,8 @@ public class CheckpointRequest {
      * @param event Client context, for example email, transaction amount, product ids, etc.
      * @param checkpointName Name of workflow to execute
      * @param sourceToken Session ID information
-     * @param userId  ID of the underlying user.
+     * @param sessionExternalId  Session ID provided by the App
+     * @param customerExternalId  Customer ID provided by the App
      */
     public CheckpointRequest(
             Event event,
@@ -68,6 +74,16 @@ public class CheckpointRequest {
         this.options = new Options();
     }
 
+    /**
+     * Constructor
+     *
+     * @param event Client context, for example email, transaction amount, product ids, etc.
+     * @param checkpointName Name of workflow to execute
+     * @param sourceToken Session ID information
+     * @param sessionExternalId  Session ID provided by the App
+     * @param customerExternalId  Customer ID provided by the App
+     * @param options Checkpoint request Options
+     */
     public CheckpointRequest(
             Event event,
             String checkpointName,
@@ -83,6 +99,17 @@ public class CheckpointRequest {
         this.options = (options == null)?new Options():options;
     }
 
+    /**
+     * Constructor
+     *
+     * @param event Client context, for example email, transaction amount, product ids, etc.
+     * @param checkpointName Name of workflow to execute
+     * @param sourceToken Session ID information
+     * @param sessionExternalId  Session ID provided by the App
+     * @param customerExternalId  Customer ID provided by the App
+     * @param options Checkpoint request Options
+     * @param priorCheckpointId ID provided by an earlier checkpoint if this query is based off that.
+     */
     public CheckpointRequest(
             Event event,
             String checkpointName,
