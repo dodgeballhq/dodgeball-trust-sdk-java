@@ -235,10 +235,6 @@ public class Dodgeball {
                     throw new RuntimeException("event.ip must be provided");
                 }
 
-                if (StringUtils.isEmpty(request.sourceToken)) {
-                    throw new RuntimeException("sourceToken: must be provided");
-                }
-
                 CheckpointRequest.Options options = request.options;
 
                 boolean trivialTimeout = options == null ||
