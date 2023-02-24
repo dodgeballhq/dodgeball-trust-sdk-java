@@ -200,7 +200,7 @@ public class Dodgeball {
         }
 
         /**
-         * Method serving primarily for testing, it can enable and disable checkpoint execution
+         * This method can disable checkpoint execution and allow user to bypass checkpoints
          *
          * @param isEnabled: Enable Checkpoint execution
          * @return this
