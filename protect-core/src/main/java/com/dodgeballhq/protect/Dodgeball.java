@@ -51,6 +51,18 @@ public class Dodgeball {
     }
 
     /**
+     * Request to validate access to a protected resource.
+     *
+     * @param request: Access request properties
+     * @return: Async function object monitoring a DodgeBall Workflow Execution
+     */
+    public CompletableFuture<Void> track(
+            TrackRequest request){
+
+        return null;
+    }
+
+    /**
      * Accessor to determine whether access is allowed
      *
      * @param checkpointResponse
