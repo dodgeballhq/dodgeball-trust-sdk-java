@@ -4,9 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.Assert.*;
 
 import com.dodgeballhq.protect.api.DodgeballServices;
-import com.dodgeballhq.protect.messages.CheckpointRequest;
-import com.dodgeballhq.protect.messages.CheckpointResponse;
-import com.dodgeballhq.protect.messages.Event;
+import com.dodgeballhq.protect.messages.*;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -166,31 +164,11 @@ public class DodgeballIntegrationTest {
 
         CompletableFuture<CheckpointResponse> responseFuture = dodgeball.checkpoint(request);
         CheckpointResponse checkpointResponse = responseFuture.join();
-
-        String finalState = "";
-
-        if (dodgeball.isAllowed(checkpointResponse)) {
-            finalState = "Allowed";
-        }
-        else if (dodgeball.isRunning(checkpointResponse)) {
-            if(checkpointResponse.isTimeout){
-                request.priorCheckpointId = checkpointResponse.verification.id;
-                Thread.sleep(1000);
-                responseFuture = dodgeball.checkpoint(request);
-                checkpointResponse = responseFuture.join();
-                finalState = checkpointResponse.verification.status;
-            }
-            finalState = "Running";
-        } else if (dodgeball.isDenied(checkpointResponse)) {
-            finalState = "Denied";
-        }else{
-            finalState = "OTHER";
-            if (checkpointResponse.errors != null && checkpointResponse.errors.length > 0){
-                finalState = finalState + " with errors: " + checkpointResponse.errors.toString();
-            }
-        }
-
-        assertEquals("Allowed", finalState);
-
+        DodgeballVerification expectedDodgeballVerification = new DodgeballVerification();
+        expectedDodgeballVerification.id = "DODGEBALL_IS_DISABLED";
+        expectedDodgeballVerification.status = "COMPLETE";
+        expectedDodgeballVerification.outcome = "APPROVED";
+        expectedDodgeballVerification.stepData = new VerificationStepData();
+        assertEquals(expectedDodgeballVerification, checkpointResponse.verification);
     }
 }

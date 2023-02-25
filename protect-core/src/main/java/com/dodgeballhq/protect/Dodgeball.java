@@ -255,7 +255,6 @@ public class Dodgeball {
                     dodgeballVerification.id = "DODGEBALL_IS_DISABLED";
                     dodgeballVerification.status = "COMPLETE";
                     dodgeballVerification.outcome = "APPROVED";
-                    dodgeballVerification.stepData = new VerificationStepData();
                     return new CheckpointResponse(true, null, dodgeballVerification, false);
                 }
 
