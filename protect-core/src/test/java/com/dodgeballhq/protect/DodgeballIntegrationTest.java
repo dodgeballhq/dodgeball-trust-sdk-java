@@ -4,9 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.Assert.*;
 
 import com.dodgeballhq.protect.api.DodgeballServices;
-import com.dodgeballhq.protect.messages.CheckpointRequest;
-import com.dodgeballhq.protect.messages.CheckpointResponse;
-import com.dodgeballhq.protect.messages.Event;
+import com.dodgeballhq.protect.messages.*;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -136,5 +134,41 @@ public class DodgeballIntegrationTest {
             }
         }
 
+    }
+
+    @Test
+    public void testIsEnabledFlag() throws Exception{
+
+        Map<String, Object> hm = new HashMap<String, Object>();
+        hm.put("amount", 30000);
+        hm.put("currency", "USD");
+        hm.put("mfaPhoneNumbers", TestValues.MFA_PHONE_NUMBERS);
+
+        Event event = new Event("127.0.0.1", hm);
+
+        CheckpointRequest.Options options = new CheckpointRequest.Options(false, 99, null);
+        CheckpointRequest request = new CheckpointRequest(
+                event,
+                TestValues.TEST_CHECKPOINT_NAME,
+                TestValues.TEST_SOURCE_TOKEN,
+                TestValues.TEST_SESSION_ID,
+                TestValues.TEST_CUSTOMER_ID,
+                options
+        );
+
+        Dodgeball dodgeball = Dodgeball.builder().
+                setApiKeys(TestValues.TEST_SECRET).
+                setDbUrl("http://localhost:3001").
+                enable(false).
+                build();
+
+        CompletableFuture<CheckpointResponse> responseFuture = dodgeball.checkpoint(request);
+        CheckpointResponse checkpointResponse = responseFuture.join();
+        DodgeballVerification expectedDodgeballVerification = new DodgeballVerification();
+        expectedDodgeballVerification.id = "DODGEBALL_IS_DISABLED";
+        expectedDodgeballVerification.status = "COMPLETE";
+        expectedDodgeballVerification.outcome = "APPROVED";
+        expectedDodgeballVerification.stepData = new VerificationStepData();
+        assertEquals(expectedDodgeballVerification, checkpointResponse.verification);
     }
 }

@@ -25,9 +25,11 @@ public class Dodgeball {
      */
     Dodgeball(
             String apiKey,
-            String url){
+            String url,
+            boolean isEnabled){
         this.apiKey = apiKey;
         this.baseUrl = url;
+        this.isEnabled = isEnabled;
     }
 
     /**
@@ -161,7 +163,8 @@ public class Dodgeball {
             }
             return new Dodgeball(
                     this.apiKey,
-                    StringUtils.isEmpty(this.dbUrl)? DEFAULT_DB_URL: this.dbUrl
+                    StringUtils.isEmpty(this.dbUrl)? DEFAULT_DB_URL: this.dbUrl,
+                    this.isEnabled
             );
         }
 
@@ -196,8 +199,20 @@ public class Dodgeball {
             return this;
         }
 
+        /**
+         * This method can disable checkpoint execution and allow user to bypass checkpoints
+         *
+         * @param isEnabled: Enable Checkpoint execution
+         * @return this
+         */
+        public Builder enable(boolean isEnabled){
+            this.isEnabled = isEnabled;
+            return this;
+        }
+
         private String dbUrl;
         private String apiKey;
+        private boolean isEnabled = true;
     }
 
 
@@ -233,6 +248,14 @@ public class Dodgeball {
                     throw new IllegalArgumentException("event: must not be null");
                 } else if (StringUtils.isEmpty(request.event.ip)) {
                     throw new RuntimeException("event.ip must be provided");
+                }
+
+                if (!isEnabled) {
+                    DodgeballVerification dodgeballVerification = new DodgeballVerification();
+                    dodgeballVerification.id = "DODGEBALL_IS_DISABLED";
+                    dodgeballVerification.status = "COMPLETE";
+                    dodgeballVerification.outcome = "APPROVED";
+                    return new CheckpointResponse(true, null, dodgeballVerification, false);
                 }
 
                 CheckpointRequest.Options options = request.options;
@@ -365,4 +388,6 @@ public class Dodgeball {
 
     String baseUrl;
     String apiKey;
+
+    boolean isEnabled;
 }
