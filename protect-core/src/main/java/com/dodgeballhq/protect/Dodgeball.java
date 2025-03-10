@@ -53,6 +53,36 @@ public class Dodgeball {
     }
 
     /**
+     * Request to validate access to a protected resource.
+     *
+     * @param request: Access request properties
+     * @return: Async function object monitoring a DodgeBall Workflow Execution
+     */
+    public CompletableFuture<NotificationResponse> notify(
+            NotificationRequest request) throws Exception {
+            DodgeballServices.NotificationCall caller =
+                    new DodgeballServices.NotificationCall(
+                this.baseUrl,
+                this.apiKey,
+                request);
+
+            return CompletableFuture.supplyAsync(caller::call);
+    }
+
+    /**
+     * This is the deprecated name for notify: we maintain this method
+     * for backwards consistency as well as to provide common vocabulary
+     * with SDKs not yet migrated -- but recommend users make use of notify
+     *
+     * @param request: Access request properties
+     * @return: Async function object monitoring a DodgeBall Workflow Execution
+     */
+    public CompletableFuture<NotificationResponse> track(
+            NotificationRequest request) throws Exception {
+        return this.notify(request);
+    }
+
+    /**
      * Accessor to determine whether access is allowed
      *
      * @param checkpointResponse
@@ -328,7 +358,7 @@ public class Dodgeball {
                     cumulativeTime += activeTimeout;
 
                     activeTimeout =
-                            activeTimeout < MAX_ACTIVE_TIMEOUT ? 2 * activeTimeout : activeTimeout;
+                            activeTimeout < (MAX_ACTIVE_TIMEOUT/2) ? 2 * activeTimeout : activeTimeout;
 
                     response = DodgeballServices.executeSynchronous(
                             Dodgeball.this.baseUrl,

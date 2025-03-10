@@ -13,24 +13,6 @@ import com.dodgeballhq.protect.messages.Event;
  *
  */
 public class ClientCheckpointData {
-    /**
-     *
-     */
-    public static class ApiEvent{
-        /**
-         *
-         * @param eventType
-         * @param data
-         */
-        public ApiEvent(String eventType, Map<String, Object> data){
-            this.type = eventType;
-            this.data = data;
-        }
-
-        public String type;
-        public Map<String, Object> data;
-        public Date eventTime;
-    }
 
     public static class WebhookData{
         public WebhookData(){

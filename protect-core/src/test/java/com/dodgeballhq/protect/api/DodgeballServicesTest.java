@@ -14,7 +14,7 @@ import static org.junit.Assert.assertTrue;
 
 public class DodgeballServicesTest {
     @Test
-    public void testBasicSend(){
+    public void testBasicCheckpointSend(){
         String testSecret = TestValues.TEST_SECRET;
         String checkpointName = "DONATION";
 
@@ -34,7 +34,7 @@ public class DodgeballServicesTest {
         );
 
         CheckpointResponse callResponse = DodgeballServices.executeSynchronous(
-                "http://localhost:3001",
+                "https://api.dev.dodgeballhq.com",
                 testSecret,
                 request);
 
@@ -43,35 +43,29 @@ public class DodgeballServicesTest {
     }
 
     @Test
-    public void testBasicAsyncSend() throws Exception{
+    public void testBasicNotificationSend(){
         String testSecret = TestValues.TEST_SECRET;
-        String checkpointName = "DONATION";
+        String eventName = "DONATION";
 
         Map<String, Object> hm = new HashMap<String, Object>();
-        hm.put("amount", 30000);
+        hm.put("amount", 10);
         hm.put("currency", "USD");
-        hm.put("mfaPhoneNumbers", TestValues.MFA_PHONE_NUMBERS);
 
         Event event = new Event("127.0.0.1", hm);
-        CheckpointRequest.Options options = new CheckpointRequest.Options();
-        options.sync = false;
-        options.timeout = 50;
-        CheckpointRequest request = new CheckpointRequest(
+
+        NotificationRequest request = new NotificationRequest(
                 event,
-                checkpointName,
-                TestValues.TEST_SOURCE_TOKEN,
+                eventName,
                 TestValues.TEST_SESSION_ID,
-                TestValues.TEST_CUSTOMER_ID,
-                options
+                TestValues.TEST_CUSTOMER_ID
         );
 
-
-        CompletableFuture<CheckpointResponse> responseFuture = DodgeballServices.executeAsync(
-                "http://localhost:3001",
+        NotificationResponse callResponse = DodgeballServices.executeNotification(
+                "https://api.dev.dodgeballhq.com",
                 testSecret,
                 request);
 
-        CheckpointResponse response = responseFuture.join();
-        assertTrue(response.success);
+
+        assertTrue(callResponse.success);
     }
 }
