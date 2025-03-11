@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
     <groupId>com.dodgeballhq.protect</groupId>
   <artifactId>protect-core</artifactId>
-  <version>1.1.0</version>
+  <version>1.1.0-SNAPSHOT</version>
   <name>Checkpoint Protect for Java (Core)</name>
     <description>Protect your software with DodgeBall</description>
     <url>https://github.com/dodgeballhq/dodgeball-trust-sdk-java</url>
