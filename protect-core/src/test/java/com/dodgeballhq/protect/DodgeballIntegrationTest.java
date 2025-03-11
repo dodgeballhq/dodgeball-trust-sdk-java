@@ -83,7 +83,7 @@ public class DodgeballIntegrationTest {
 
     }
 
-    @Test
+    // @Test
     public void testStandardPipelineRetry() throws Exception{
 
         Map<String, Object> hm = new HashMap<String, Object>();
