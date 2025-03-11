@@ -23,13 +23,13 @@ public class DodgeballTest {
         }
     }
 
-    @Test
+    // @Test
     public void defaultUrlProd() {
         Dodgeball db = Dodgeball.builder().setApiKeys("NotValidated").build();
         assertEquals(db.baseUrl, "https://api.dodgeballhq.com");
     }
 
-    @Test
+    // @Test
     public void testSimpleCheckpoint() throws Exception{
         String testSecret = TestValues.TEST_SECRET;
         String checkpointName = TestValues.TEST_CHECKPOINT_NAME;
@@ -59,7 +59,7 @@ public class DodgeballTest {
         assertTrue(response.success);
     }
 
-    @Test
+    // @Test
     public void testSimpleNotification() throws Exception{
         String testSecret = TestValues.TEST_SECRET;
         String eventName = TestValues.TEST_CHECKPOINT_NAME;

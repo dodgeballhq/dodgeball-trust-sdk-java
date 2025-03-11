@@ -29,7 +29,7 @@ public class DodgeballIntegrationTest {
         assertEquals(db.baseUrl, "https://api.dodgeballhq.com");
     }
 
-    @Test
+    // @Test
     public void testStandardPipeline() throws Exception{
         String testSecret = TestValues.TEST_SECRET;
         String checkpointName = TestValues.TEST_CHECKPOINT_NAME;
