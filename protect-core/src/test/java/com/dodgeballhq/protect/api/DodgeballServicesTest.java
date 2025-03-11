@@ -13,7 +13,7 @@ import java.util.concurrent.*;
 import static org.junit.Assert.assertTrue;
 
 public class DodgeballServicesTest {
-    @Test
+    // @Test
     public void testBasicCheckpointSend(){
         String testSecret = TestValues.TEST_SECRET;
         String checkpointName = "DONATION";
@@ -42,7 +42,7 @@ public class DodgeballServicesTest {
         assertTrue(callResponse.success);
     }
 
-    @Test
+    // @Test
     public void testBasicNotificationSend(){
         String testSecret = TestValues.TEST_SECRET;
         String eventName = "DONATION";

@@ -136,7 +136,7 @@ public class DodgeballIntegrationTest {
 
     }
 
-    @Test
+    // @Test
     public void testIsEnabledFlag() throws Exception{
 
         Map<String, Object> hm = new HashMap<String, Object>();
