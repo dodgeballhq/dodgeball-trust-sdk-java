@@ -4,9 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.Assert.*;
 
 import com.dodgeballhq.protect.api.DodgeballServices;
-import com.dodgeballhq.protect.messages.CheckpointRequest;
-import com.dodgeballhq.protect.messages.CheckpointResponse;
-import com.dodgeballhq.protect.messages.Event;
+import com.dodgeballhq.protect.messages.*;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -39,25 +37,54 @@ public class DodgeballTest {
         Map<String, Object> hm = new HashMap<String, Object>();
         hm.put("amount", 30000);
         hm.put("currency", "USD");
-        hm.put("mfaPhoneNumbers", TestValues.MFA_PHONE_NUMBERS);
+        hm.put("mfaAddresses", TestValues.MFA_EMAIL_ADDRESSES);
 
         Event event = new Event("127.0.0.1", hm);
 
         CheckpointRequest request = new CheckpointRequest(
                 event,
                 checkpointName,
-                TestValues.TEST_SOURCE_TOKEN,
+                null,
                 TestValues.TEST_SESSION_ID,
                 TestValues.TEST_CUSTOMER_ID
         );
 
         Dodgeball db = Dodgeball.builder().
                 setApiKeys(testSecret).
-                setDbUrl("http://localhost:3001").
+                setDbUrl("https://api.dev.dodgeballhq.com").
                 build();
 
         CompletableFuture<CheckpointResponse> responseFuture = db.checkpoint(request);
         CheckpointResponse response = responseFuture.join();
+        assertTrue(response.success);
+    }
+
+    @Test
+    public void testSimpleNotification() throws Exception{
+        String testSecret = TestValues.TEST_SECRET;
+        String eventName = TestValues.TEST_CHECKPOINT_NAME;
+
+        Map<String, Object> hm = new HashMap<String, Object>();
+        hm.put("amount", 30000);
+        hm.put("currency", "USD");
+        hm.put("mfaAddresses", TestValues.MFA_EMAIL_ADDRESSES);
+
+        Event event = new Event(hm);
+
+        NotificationRequest request = new NotificationRequest(
+                event,
+                eventName,
+                TestValues.TEST_SESSION_ID,
+                TestValues.TEST_CUSTOMER_ID
+        );
+
+        Dodgeball db = Dodgeball.builder().
+                setApiKeys(testSecret).
+                setDbUrl("https://api.dev.dodgeballhq.com").
+                build();
+
+        CompletableFuture<NotificationResponse> responseFuture = db.notify(request);
+        NotificationResponse response = responseFuture.join();
         assertTrue(response.success);
     }
 

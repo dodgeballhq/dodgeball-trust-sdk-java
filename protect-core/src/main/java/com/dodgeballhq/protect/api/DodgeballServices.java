@@ -35,19 +35,24 @@ public class DodgeballServices {
         }
     }
 
-    public static CompletableFuture<CheckpointResponse> executeAsync(
+    public static NotificationResponse executeNotification(
             String baseUrl,
             String dbApiKey,
-            CheckpointRequest request
-    ) throws Exception {
-        CheckpointCall caller = new CheckpointCall(
-                baseUrl,
-                dbApiKey,
-                request
-        );
+            NotificationRequest request
+    ) {
+        try
+        {
+            NotificationCall caller = new NotificationCall(
+                    baseUrl,
+                    dbApiKey,
+                    request
+            );
 
-        CheckpointCall.Invoker invoker = caller.prepare();
-        return CompletableFuture.supplyAsync(invoker::execute);
+            return caller.call();
+        }
+        catch (Exception exc){
+            return new NotificationResponse(exc);
+        }
     }
 
     public static class CheckpointCall implements
@@ -153,10 +158,107 @@ public class DodgeballServices {
         }
     }
 
-    public CheckpointResponse execute(
+    public static class NotificationCall implements
+            Callable<NotificationResponse>,
+            Callback<NotificationResponse> {
+        public NotificationCall(
+                String baseUrl,
+                String dbApiKey,
+                NotificationRequest request
+        ){
+            this.baseUrl = baseUrl;
+            this.dbApiKey = dbApiKey;
+            this.request = request;
+        }
+
+        public static class Invoker{
+            public Invoker(Call<NotificationResponse> toCall){
+                this.toCall = toCall;
+            }
+
+            public NotificationResponse execute(){
+                try {
+                    Response<NotificationResponse> response = this.toCall.execute();
+                    if (response.isSuccessful()) {
+                        return response.body();
+                    } else {
+                        return new NotificationResponse(
+                                false,
+                                new DodgeballApiError[]{new DodgeballApiError(response.message())}
+                        );
+                    }
+                }
+                catch(Exception exc){
+                    return new NotificationResponse(exc);
+                }
+            }
+
+            private Call<NotificationResponse> toCall;
+        }
+
+        @Override
+        public NotificationResponse call() {
+            try{
+                NotificationCall.Invoker invoker = this.prepare();
+                return invoker.execute();
+            }
+            catch (Exception exc){
+                return new NotificationResponse(exc);
+            }
+        }
+
+        public NotificationCall.Invoker prepare() throws Exception {
+            OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(baseUrl)
+                    .client(httpClient.build())
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+
+            ApiEvent eventData = new ApiEvent(request.eventName, request.event.data);
+
+            INotification notification = retrofit.create(INotification.class);
+            Call<NotificationResponse> toCall = notification.callNotification(
+                    dbApiKey,
+                    request.sessionExternalId,
+                    request.customerExternalId,
+                    eventData
+            );
+
+            return new NotificationCall.Invoker(toCall);
+        }
+
+        String baseUrl;
+        String dbApiKey;
+        public NotificationRequest request;
+        public NotificationResponse response;
+
+        @Override
+        public void onResponse(
+                Call<NotificationResponse> rThis,
+                Response<NotificationResponse> response) {
+            this.response = response.body();
+        }
+
+        @Override
+        public void onFailure(Call<NotificationResponse> rThis, Throwable throwable) {
+            DodgeballApiError[] errors = {
+                    new DodgeballApiError(
+                            throwable.getMessage(),
+                            throwable.getStackTrace().toString())
+            };
+
+            this.response = new NotificationResponse(
+                    false,
+                    errors
+            );
+        }
+    }
+
+    public NotificationResponse execute(
             String baseUrl,
             String dbApiKey,
-            CheckpointRequest request
+            NotificationRequest request
     ) {
         try
         {
@@ -167,28 +269,29 @@ public class DodgeballServices {
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 
-            ClientCheckpointData checkpointData = new ClientCheckpointData(request);
-
-            ICheckpoint checkpoint = retrofit.create(ICheckpoint.class);
-            Call<CheckpointResponse> toCall =  checkpoint.callCheckpoint(
-                    dbApiKey,
-                    request.sourceToken,
-                    request.customerExternalId,
-                    request.sessionExternalId,
-                    request.priorCheckpointId,
-                    checkpointData
+            ApiEvent eventData = new ApiEvent(
+                    request.eventName,
+                    request.event.data
             );
 
-            final CheckpointResponse[] toReturn = {null};
-            Callback<CheckpointResponse> callback =
-                    new Callback<CheckpointResponse>() {
+            INotification notification = retrofit.create(INotification.class);
+            Call<NotificationResponse> toCall =  notification.callNotification(
+                    dbApiKey,
+                    request.sessionExternalId,
+                    request.customerExternalId,
+                    eventData
+            );
+
+            final NotificationResponse[] toReturn = {null};
+            Callback<NotificationResponse> callback =
+                    new Callback<NotificationResponse>() {
                         @Override
-                        public void onResponse(Call<CheckpointResponse> call, Response<CheckpointResponse> response) {
+                        public void onResponse(Call<NotificationResponse> call, Response<NotificationResponse> response) {
 
                         }
 
                         @Override
-                        public void onFailure(Call<CheckpointResponse> call, Throwable throwable) {
+                        public void onFailure(Call<NotificationResponse> call, Throwable throwable) {
 
                         }
                     };
@@ -211,11 +314,9 @@ public class DodgeballServices {
                     )
             };
 
-            return new CheckpointResponse(
+            return new NotificationResponse(
                     false,
-                    errors,
-                    null,
-                    false);
+                    errors);
         }
     }
 }
