@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class DodgeballServices {
 
-    public static CheckpointResponse executeSynchronous(
+    public static CheckpointResponse createCheckpoint(
             String baseUrl,
             String dbApiKey,
             CheckpointRequest request
@@ -52,6 +52,28 @@ public class DodgeballServices {
         }
         catch (Exception exc){
             return new NotificationResponse(exc);
+        }
+    }
+
+    public static CheckpointResponse verifyCheckpoint(
+            String baseUrl,
+            String dbApiKey,
+            String verificationId,
+            CheckpointRequest request
+    ) {
+        try
+        {
+            VerificationCall caller = new VerificationCall(
+                    baseUrl,
+                    dbApiKey,
+                verificationId,
+                request
+            );
+
+            return caller.call();
+        }
+        catch (Exception exc){
+            return new CheckpointResponse(exc);
         }
     }
 
@@ -131,6 +153,110 @@ public class DodgeballServices {
 
         String baseUrl;
         String dbApiKey;
+        public CheckpointRequest request;
+        public CheckpointResponse response;
+
+        @Override
+        public void onResponse(
+                Call<CheckpointResponse> rThis,
+                Response<CheckpointResponse> response) {
+            this.response = response.body();
+        }
+
+        @Override
+        public void onFailure(Call<CheckpointResponse> rThis, Throwable throwable) {
+            DodgeballApiError[] errors = {
+                    new DodgeballApiError(
+                            throwable.getMessage(),
+                            throwable.getStackTrace().toString())
+            };
+
+            this.response = new CheckpointResponse(
+                    false,
+                    errors,
+                    null,
+                    false
+            );
+        }
+    }
+
+    public static class VerificationCall implements
+            Callable<CheckpointResponse>,
+            Callback<CheckpointResponse> {
+        public VerificationCall(
+                String baseUrl,
+                String dbApiKey,
+                String verificationId,
+                CheckpointRequest request
+        ){
+            this.baseUrl = baseUrl;
+            this.dbApiKey = dbApiKey;
+            this.verificationId = verificationId;
+            this.request = request;
+        }
+
+        public static class Invoker{
+            public Invoker(Call<CheckpointResponse> toCall){
+                this.toCall = toCall;
+            }
+
+            public CheckpointResponse execute(){
+                try {
+                    Response<CheckpointResponse> response = this.toCall.execute();
+                    if (response.isSuccessful()) {
+                        return response.body();
+                    } else {
+                        return new CheckpointResponse(
+                                false,
+                                new DodgeballApiError[]{new DodgeballApiError(response.message())},
+                                null,
+                                false
+                        );
+                    }
+                }
+                catch(Exception exc){
+                    return new CheckpointResponse(exc);
+                }
+            }
+
+            private Call<CheckpointResponse> toCall;
+        }
+
+        @Override
+        public CheckpointResponse call() throws Exception{
+            try{
+                Invoker invoker = this.prepare();
+                return invoker.execute();
+            }
+            catch (Exception exc){
+                return new CheckpointResponse(exc);
+            }
+        }
+
+        public Invoker prepare() throws Exception {
+            OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(baseUrl)
+                    .client(httpClient.build())
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+
+            IVerify verify = retrofit.create(IVerify.class);
+            Call<CheckpointResponse> toCall = verify.callVerify(
+                    dbApiKey,
+                    request.sourceToken,
+                    request.sessionExternalId,
+                    request.customerExternalId,
+                    request.priorCheckpointId,
+                    verificationId   // verificationId path parameter
+            );
+
+            return new Invoker(toCall);
+        }
+
+        String baseUrl;
+        String dbApiKey;
+        public String verificationId;
         public CheckpointRequest request;
         public CheckpointResponse response;
 

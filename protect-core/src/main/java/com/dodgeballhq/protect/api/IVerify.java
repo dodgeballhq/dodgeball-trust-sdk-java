@@ -4,14 +4,14 @@ import retrofit2.http.*;
 
 import com.dodgeballhq.protect.messages.*;
 
-public interface ICheckpoint {
-    @POST("/v1/checkpoint")
+public interface IVerify {
+    @GET("/v1/verify/{verificationId}")
     @Headers("Content-Type:application/json")
-    Call<CheckpointResponse> callCheckpoint(
+    Call<CheckpointResponse> callVerify(
             @Header("dodgeball-secret-key") String apiKey,
             @Header("dodgeball-source-token") String sourceToken,
             @Header("dodgeball-session-id") String sessionExternalId,
             @Header("dodgeball-customer-id") String customerExternalId,
             @Header("dodgeball-verification-id") String priorVerificationId,
-            @Body ClientCheckpointData body);
+            @Path("verificationId") String verificationId);
 }

@@ -33,7 +33,7 @@ public class DodgeballServicesTest {
                 null
         );
 
-        CheckpointResponse callResponse = DodgeballServices.executeSynchronous(
+        CheckpointResponse callResponse = DodgeballServices.createCheckpoint(
                 "https://api.dev.dodgeballhq.com",
                 testSecret,
                 request);
@@ -65,6 +65,30 @@ public class DodgeballServicesTest {
                 testSecret,
                 request);
 
+
+        assertTrue(callResponse.success);
+    }
+
+    @Test
+    public void testBasicCheckpointVerify(){
+        String testSecret = TestValues.TEST_SECRET;
+        String verificationId = "test-verification-id";
+
+        CheckpointRequest request = new CheckpointRequest(
+                null,
+                null,
+                TestValues.TEST_SOURCE_TOKEN,
+                TestValues.TEST_SESSION_ID,
+                TestValues.TEST_CUSTOMER_ID,
+                null,
+                verificationId
+        );
+
+        CheckpointResponse callResponse = DodgeballServices.verifyCheckpoint(
+                "https://api.dev.dodgeballhq.com",
+                testSecret,
+                verificationId,
+                request);
 
         assertTrue(callResponse.success);
     }
