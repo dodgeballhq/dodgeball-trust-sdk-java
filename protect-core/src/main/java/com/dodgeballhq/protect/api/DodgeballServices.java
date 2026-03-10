@@ -197,29 +197,14 @@ public class DodgeballServices {
 
         public static class Invoker{
             public Invoker(Call<CheckpointResponse> toCall){
-                this.toCall = toCall;
+                this.delegate = new CheckpointCall.Invoker(toCall);
             }
 
             public CheckpointResponse execute(){
-                try {
-                    Response<CheckpointResponse> response = this.toCall.execute();
-                    if (response.isSuccessful()) {
-                        return response.body();
-                    } else {
-                        return new CheckpointResponse(
-                                false,
-                                new DodgeballApiError[]{new DodgeballApiError(response.message())},
-                                null,
-                                false
-                        );
-                    }
-                }
-                catch(Exception exc){
-                    return new CheckpointResponse(exc);
-                }
+                return delegate.execute();
             }
 
-            private Call<CheckpointResponse> toCall;
+            private final CheckpointCall.Invoker delegate;
         }
 
         @Override
