@@ -66,8 +66,8 @@ public class DodgeballServices {
             VerificationCall caller = new VerificationCall(
                     baseUrl,
                     dbApiKey,
-                verificationId,
-                request
+                    verificationId,
+                    request
             );
 
             return caller.call();

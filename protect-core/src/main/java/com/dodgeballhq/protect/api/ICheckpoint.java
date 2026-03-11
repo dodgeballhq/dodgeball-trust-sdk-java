@@ -14,4 +14,5 @@ public interface ICheckpoint {
             @Header("dodgeball-customer-id") String customerExternalId,
             @Header("dodgeball-verification-id") String priorVerificationId,
             @Body ClientCheckpointData body);
+
 }

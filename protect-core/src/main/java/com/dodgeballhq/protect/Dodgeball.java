@@ -306,7 +306,6 @@ public class Dodgeball {
                         );
 
                 CheckpointResponse response = null;
-                int numRepeats = 0;
                 int numFailures = 0;
                 int cumulativeTime = 0;
 
@@ -324,7 +323,6 @@ public class Dodgeball {
                         Dodgeball.this.apiKey,
                         internalRequest
                 );
-                numRepeats += 1;
                 cumulativeTime += activeTimeout;
 
                 if (response == null) {
@@ -372,7 +370,7 @@ public class Dodgeball {
                             numFailures += 1;
                         } else {
                             isResolved = !stringsEqual(status,Constants.VerificationStatus.PENDING);
-                            numRepeats += 1;
+                            numFailures = 0;
                         }
                     } else {
                         numFailures += 1;
