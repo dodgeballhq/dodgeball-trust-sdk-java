@@ -11,4 +11,13 @@ public class TestValues {
     public static String TEST_CHECKPOINT_NAME = "DONATION";
     public static String MFA_PHONE_NUMBERS = "+16****";
     public static String MFA_EMAIL_ADDRESSES = "t***@example.com";
+
+    public static String getTestBaseUrl() {
+        String configuredUrl = System.getProperty("dodgeball.test.url");
+        if (configuredUrl == null || configuredUrl.trim().isEmpty()) {
+            return "https://api.dev.dodgeballhq.com";
+        }
+
+        return configuredUrl;
+    }
 }

@@ -5,6 +5,7 @@
 - [Prerequisites](#prerequisites)
 - [Related](#related)
 - [Installation](#installation)
+- [Testing](#testing)
 - [Usage](#usage)
 - [API](#api)
 
@@ -25,6 +26,19 @@ Check out the [Dodgeball Trust Client SDK](https://npmjs.com/package/@dodgeball/
 
 ## Installation
 Add as a dependency from git.
+
+## Testing
+Run tests with the default test endpoint:
+
+```bash
+mvn test
+```
+
+Override the test API base URL from the CLI (defaults to `https://api.dev.dodgeballhq.com` when not provided):
+
+```bash
+mvn test -Ddodgeball.test.url=https://your-test-host
+```
 
 ## Usage
 ```java
