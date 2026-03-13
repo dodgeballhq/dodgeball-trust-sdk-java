@@ -5,7 +5,7 @@ import retrofit2.http.*;
 import com.dodgeballhq.protect.messages.*;
 
 public interface IVerify {
-    @GET("/v1/verify/{verificationId}")
+    @GET("/v1/verification/{verificationId}")
     @Headers("Content-Type:application/json")
     Call<CheckpointResponse> callVerify(
             @Header("dodgeball-secret-key") String apiKey,
