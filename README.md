@@ -27,19 +27,6 @@ Check out the [Dodgeball Trust Client SDK](https://npmjs.com/package/@dodgeball/
 ## Installation
 Add as a dependency from git.
 
-## Testing
-Run tests with the default test endpoint:
-
-```bash
-mvn test
-```
-
-Override the test API base URL from the CLI (defaults to `https://api.dev.dodgeballhq.com` when not provided):
-
-```bash
-mvn test -Ddodgeball.test.url=https://your-test-host
-```
-
 ## Usage
 ```java
 import com.dodgeballhq.protect.Dodgeball;
@@ -119,10 +106,10 @@ The `isUndecided` method takes in a checkpoint response and returns `true` if th
 The `hasError` method takes in a checkpoint response and returns `true` if it contains an error.
 
 #### `dodgeball.isTimeout(checkpointResponse)`
-The `isTimeout` method takes in a checkpoint response and returns `true` if the verification has timed out. At which point it is up to the application to decide how to proceed. 
+The `isTimeout` method takes in a checkpoint response and returns `true` if the verification has timed out. At which point it is up to the application to decide how to proceed.
 
 ### useVerification
 ___
-Sometimes additional input is required from the user before making a determination about how to proceed. For example, if a user should be required to perform 2FA before being allowed to proceed, the checkpoint response will contain a verification with `status` of `BLOCKED` and  outcome of `PENDING`. In this scenario, you will want to return the verification to your frontend application. Inside your frontend application, you can pass the returned verification directly to the `dodgeball.handleVerification()` method to automatically handle gathering additional input from the user. Continuing with our 2FA example, the user would be prompted to select a phone number and enter a code sent to that number. Once the additional input is received, the frontend application should simply send along the ID of the verification performed to your API. Passing that verification ID to the `useVerification` option will allow that verification to be used for this checkpoint instead of creating a new one. This prevents duplicate verifications being performed on the user. 
+Sometimes additional input is required from the user before making a determination about how to proceed. For example, if a user should be required to perform 2FA before being allowed to proceed, the checkpoint response will contain a verification with `status` of `BLOCKED` and  outcome of `PENDING`. In this scenario, you will want to return the verification to your frontend application. Inside your frontend application, you can pass the returned verification directly to the `dodgeball.handleVerification()` method to automatically handle gathering additional input from the user. Continuing with our 2FA example, the user would be prompted to select a phone number and enter a code sent to that number. Once the additional input is received, the frontend application should simply send along the ID of the verification performed to your API. Passing that verification ID to the `useVerification` option will allow that verification to be used for this checkpoint instead of creating a new one. This prevents duplicate verifications being performed on the user.
 
 **Important Note:** To prevent replay attacks, each verification ID can only be passed to `useVerification` once.
