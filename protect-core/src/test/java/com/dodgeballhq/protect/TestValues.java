@@ -10,4 +10,5 @@ public class TestValues {
     public static String TEST_SOURCE_TOKEN = " 8c07e088-a767-4c0c-9150-304060ed7df5";
     public static String TEST_CHECKPOINT_NAME = "DONATION";
     public static String MFA_PHONE_NUMBERS = "+16****";
+    public static String MFA_EMAIL_ADDRESSES = "t***@example.com";
 }

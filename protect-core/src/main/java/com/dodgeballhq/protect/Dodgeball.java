@@ -267,9 +267,8 @@ public class Dodgeball {
                     throw new Exception("Must provide a request to execute");
                 }
 
-                String checkpointName = request.checkpointName;
                 // Validate required parameters are present
-                if (checkpointName == null) {
+                if (request.checkpointName == null) {
                     throw new RuntimeException(
                             "checkpointName: must not be null");
                 }
@@ -307,28 +306,24 @@ public class Dodgeball {
                         );
 
                 CheckpointResponse response = null;
-                int numRepeats = 0;
                 int numFailures = 0;
                 int cumulativeTime = 0;
 
-                while ((response == null || !response.success) && numRepeats < 3) {
-                    CheckpointRequest internalRequest = new CheckpointRequest(
-                            request.event,
-                            checkpointName,
-                            request.sourceToken,
-                            request.sessionExternalId,
-                            request.customerExternalId,
-                            internalOptions,
-                            request.priorCheckpointId);
+                CheckpointRequest internalRequest = new CheckpointRequest(
+                        request.event,
+                        request.checkpointName,
+                        request.sourceToken,
+                        request.sessionExternalId,
+                        request.customerExternalId,
+                        internalOptions,
+                        request.priorCheckpointId);
 
-                    response = DodgeballServices.executeSynchronous(
-                            Dodgeball.this.baseUrl,
-                            Dodgeball.this.apiKey,
-                            internalRequest
-                    );
-                    numRepeats += 1;
-                    cumulativeTime += activeTimeout;
-                }
+                response = DodgeballServices.createCheckpoint(
+                        Dodgeball.this.baseUrl,
+                        Dodgeball.this.apiKey,
+                        internalRequest
+                );
+                cumulativeTime += activeTimeout;
 
                 if (response == null) {
                     throw new Exception("Unknown server error");
@@ -342,7 +337,6 @@ public class Dodgeball {
                 String verificationId = (response.verification == null) ?
                         null :
                         response.verification.id;
-
 
                 int maxTimeout = BASE_MAX_CHECKPOINT_TIMEOUT_MS;
                 if (options != null) {
@@ -360,9 +354,10 @@ public class Dodgeball {
                     activeTimeout =
                             activeTimeout < (MAX_ACTIVE_TIMEOUT/2) ? 2 * activeTimeout : activeTimeout;
 
-                    response = DodgeballServices.executeSynchronous(
+                    response = DodgeballServices.verifyCheckpoint(
                             Dodgeball.this.baseUrl,
                             Dodgeball.this.apiKey,
+                            verificationId,
                             request
                     );
                     cumulativeTime += activeTimeout;
@@ -375,7 +370,7 @@ public class Dodgeball {
                             numFailures += 1;
                         } else {
                             isResolved = !stringsEqual(status,Constants.VerificationStatus.PENDING);
-                            numRepeats += 1;
+                            numFailures = 0;
                         }
                     } else {
                         numFailures += 1;
