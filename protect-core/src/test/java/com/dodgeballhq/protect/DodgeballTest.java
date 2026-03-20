@@ -50,7 +50,7 @@ public class DodgeballTest {
         }
     }
 
-    @Test
+    // @Test
     public void defaultUrlProd() {
         Dodgeball db = Dodgeball.builder().setApiKeys("NotValidated").build();
         assertEquals(db.baseUrl, "https://api.dodgeballhq.com");

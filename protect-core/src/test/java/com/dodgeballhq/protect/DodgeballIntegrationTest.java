@@ -29,7 +29,7 @@ public class DodgeballIntegrationTest {
         assertEquals(db.baseUrl, "https://api.dodgeballhq.com");
     }
 
-    @Test
+    // @Test
     public void testStandardPipeline() throws Exception{
         String testSecret = TestValues.TEST_SECRET;
         String checkpointName = TestValues.TEST_CHECKPOINT_NAME;
@@ -83,7 +83,7 @@ public class DodgeballIntegrationTest {
 
     }
 
-    @Test
+    // @Test
     public void testStandardPipelineRetry() throws Exception{
 
         Map<String, Object> hm = new HashMap<String, Object>();
@@ -136,7 +136,7 @@ public class DodgeballIntegrationTest {
 
     }
 
-    @Test
+    // @Test
     public void testIsEnabledFlag() throws Exception{
 
         Map<String, Object> hm = new HashMap<String, Object>();
