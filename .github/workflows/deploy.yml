@@ -20,7 +20,7 @@ jobs:
       - name: Set version from release tag
         run: mvn versions:set -DnewVersion=${{ github.event.release.tag_name }} -DgenerateBackupPoms=false
       - name: Publish package
-        run: mvn --batch-mode deploy -DskipTests
+        run: mvn --batch-mode deploy
         env:
           CENTRAL_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
           CENTRAL_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
