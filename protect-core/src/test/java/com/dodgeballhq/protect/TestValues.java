@@ -3,7 +3,7 @@ package com.dodgeballhq.protect;
 public class TestValues {
 
     // Mock value, will not match any systems
-    public static String TEST_SECRET = "";
+    public static String TEST_SECRET = "94d564b4fdb311eca41b939ac43d0d72";
     public static String TEST_SESSION_ID= "auth0|61b7fee7f64d4a0072ae49d0";
     public static String TEST_CUSTOMER_ID = "c0eebf8c-ba5d-44fc-8b92-0269d950bcbe";
 
